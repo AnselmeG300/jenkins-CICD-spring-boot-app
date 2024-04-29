@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Transfer</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+<header id="transfer-header" th:insert="fragments/header :: header"></header>
+
+<main class="container">
+    <!-- display alert if user created-->
+    <div th:if="${success}"
+         class="alert alert-success alert-dismissible fade show mb-lg-0 my-2"
+         role="alert">
+        <h5 class="alert-heading">Successful</h5>
+        <p th:text="${success}">Success message!
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+    </div>
+    <!-- display alert if an error occurred-->
+    <div th:if="${error}"
+         class="alert alert-danger alert-dismissible fade show mb-lg-0 my-2"
+         role="alert">
+        <h5 class="alert-heading">An error occurred</h5>
+        <p th:text="${error}">Error message.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+    </div>
+    <!--send money-->
+    <div class="col my-2" id="send-money">
+        <!--label and add connection button-->
+        <div class="row mx-auto d-flex justify-content-between align-items-end" id="send-money-header">
+            <h4>Send money</h4>
+            <a class="btn btn-primary" href="/add-connection" th:href="@{/transfer/add-connection}" role="button">Add Connection</a>
+        </div>
+        <!--select connection, amount and Pay button-->
+        <div class="row">
+            <form id="send-money-body"
+                  class="row bg-light d-flex justify-content-between align-items-center m-2 w-100"
+                  th:action="@{/transfer/pay}" method="post" th:object="${transferForm}">
+                <div class="col input-group">
+                    <label>
+                        <select class="form-select m-4" id="payee" name="payee" th:field="*{payeeEmail}" required>
+                            <option value="">Select a connection</option>
+                            <option th:each="connection: ${connections}"
+                                    th:value="${connection.getEmail()}"
+                                    th:text="${connection.getFirstname() +' ' + connection.getLastname()}"></option>
+                        </select>
+                    </label>
+                </div>
+                <div class="col input-group m-4">
+                    <label>
+                        <input type="number" min="0.01"
+                               step="0.01" placeholder="0.00 €"
+                               id="amount" name="amount" required
+                               th:field="*{amount}">
+                    </label>
+                </div>
+                <div class="col-auto m-4">
+                    <button class="btn btn-success" href="/pay" th:href="@{/transfer/pay}" role="button"
+                            name="action" value="redirect">Pay
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col" id="my-transactions">
+        <h4 id="transactions-title">Your transactions</h4>
+        <table id="transactions-table" class="table table-striped justify-content-between mx-auto">
+            <thead class="bg-success">
+            <tr class="text-white">
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${totalTransactionItems == 0}">
+                <td></td>
+                <td class="font-italic">No transactions.</td>
+                <td></td>
+            </tr>
+            <tr th:each="transaction : ${pagedList.content}">
+                <td th:text="((${transaction.issuer.getEmail()} == ${user.getEmail()}) ? ${transaction.payee.getFirstname()} : ${transaction.issuer.getFirstname()})">Haley</td>
+                <td th:text="${transaction.description}">Restaurant bill share</td>
+                <td th:text="${#strings.replace(#numbers.formatCurrency(transaction.amount), ',00', '')}">10.00 €</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="form-text text-muted mx-auto col-4 text-small">
+        Total transactions: [[${totalTransactionItems}]]
+    </div>
+    <nav id="transaction-pagination" th:insert="fragments/pagination :: nav"></nav>
+</main>
+
+<footer>
+    <div th:replace="fragments/footer :: footer" class="text-center">Pay My Buddy | 2022 | &copy; <a href="https://github.com/ernhollam/PayMyBuddy" target="_blank">ernhollam</a></div>
+</footer>
+
+</body>
+</html>

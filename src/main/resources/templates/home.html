@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${'Welcome, ' + user.getFirstName() + '!'}">Welcome back, buddy!</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/60778dae53.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+<header id="home-header" th:insert="fragments/header :: header"></header>
+
+<main class="container my-2">
+    <h5 class="ls-tight display-4" th:text="${'Good to see you again, ' + user.getFirstName() + '!'}">
+        Good to see you again, User! <br/>
+    </h5>
+    <!-- CARDS -->
+    <div class="row my-2">
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body" id="most-recent-connection">
+                    <i class="fa-solid fa-user-group fa-2x" style="color: #74d36a"></i>
+                    <h4 class="card-title">Most recent connection</h4>
+                    <p th:if="${mostRecentConnection == null}" class="card-text font-italic">No connections. <a href="/add-connection" th:href="@{/transfer/add-connection}"
+                                                                                                                class="text-primary">Add a connection</a>
+                    </p>
+                    <p class="card-text"
+                       th:unless="${mostRecentConnection == null}"
+                       th:text="${(mostRecentConnection.initializer.getEmail() == user.getEmail()) ?
+                               mostRecentConnection.receiver.getFirstname() + ', added the ' + mostRecentConnection.getStartingDate()
+                               : mostRecentConnection.initializer.getFirstname() + ', added the ' + mostRecentConnection.getStartingDate()}">Haley, added the 03-10-2022 16:18
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body h-100">
+                    <i class="fa-solid fa-money-bill-transfer fa-2x" style="color: #74d36a"></i>
+                    <h4 class="card-title">Most recent transaction</h4>
+                    <p th:if="${mostRecentTransaction == null}" class="card-text font-italic">No transactions. <a href="/transfer" th:href="@{/transfer}"
+                                                                                                                  class="text-primary">Add transaction</a>
+                    </p>
+                    <p class="card-text"
+                       th:unless="${mostRecentTransaction == null}"
+                       th:text="${#strings.replace(#numbers.formatCurrency(mostRecentTransaction.amount), ',00', '')}
+                               + ${(mostRecentTransaction.issuer.getEmail() == user.getEmail()) ?
+                               ' to ' + mostRecentTransaction.payee.getFirstname() :
+                               ' from ' + mostRecentTransaction.issuer.getFirstname()}
+                                   ">10.55€ to Hayley
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 border-0 " style="background-color: #f4f7fd">
+                <div class="card-body h-100">
+                    <i class="fa-solid fa-wallet fa-2x" style="color: #74d36a"></i>
+                    <h4 class="card-title" th:fragment="current-balance-title">Current balance</h4>
+                    <p class="card-text display-4" th:fragment="current-balance" th:text="${#strings.replace(#numbers.formatCurrency(user.getBalance()), ',00', '')}">358.29€</p>
+                    <div th:fragment="update-balance-button" class="row justify-content-around align-items-center">
+                        <a class="btn btn-primary" href="/update-balance" th:href="@{/profile/update-balance}" role="button">Update balance</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div th:replace="fragments/footer :: footer" class="text-center">Pay My Buddy | 2022 | &copy; <a href="https://github.com/ernhollam/PayMyBuddy" target="_blank">ernhollam</a></div>
+</footer>
+</body>
+
+</html>

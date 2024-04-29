@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:insert="header::head-stylesheet"/>
+</head>
+<body>
+<div th:fragment="footer" th:align="center">
+    Pay My Buddy | <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}">2022</span> | &copy; <a href="http://github.com/ernhollam/PayMyBuddy" target="_blank">ernhollam</a>
+</div>
+</body>
+</html>

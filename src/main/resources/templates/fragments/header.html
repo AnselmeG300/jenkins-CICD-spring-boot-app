@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pay My Buddy</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+</head>
+
+<body>
+<header th:with="page=${page}">
+    <!--navigation bar-->
+    <nav class="navbar navbar-expand-lg navbar-light justify-content-end" th:fragment="navbar">
+        <button class="btn btn-success mr-auto ml-2">Pay My Buddy</button>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse flex-grow-0" id="navbar">
+            <ul class="navbar-nav text-right">
+                <li class="nav-item"
+                    th:classappend="${page == 'home' ? 'active' : ''}">
+                    <a th:classappend="${page == 'home' ? 'text-primary' : ''}"
+                       class="nav-link"
+                       href="/home" th:href="@{/}">Home<span class="sr-only" th:if="${page == 'home'}">(current)</span></a>
+                </li>
+                <li class="nav-item"
+                    th:classappend="${page == 'transfer' || page == 'add-connection' || page == 'pay' ? 'active' : ''}">
+                    <a th:classappend="${page == 'transfer' || page == 'add-connection' || page == 'pay' ? 'text-primary' : ''}"
+                       class="nav-link"
+                       href="/transfer">Transfer<span class="sr-only"
+                                                      th:if="${page == 'transfer' || page == 'add-connection' || page == 'pay'}">(current)</span></a>
+                </li>
+                <li class="nav-item"
+                    th:classappend="${page == 'profile' || page == 'update-balance' ? 'active' : ''}">
+                    <a th:classappend="${page == 'profile' || page == 'update-balance' ? 'text-primary' : ''}"
+                       class="nav-link"
+                       href="/profile">Profile<span class="sr-only" th:if="${page == 'profile' || page == 'update-balance'}">(current)</span></a>
+                </li>
+                <li class="nav-item"
+                    th:classappend="${page == 'contact' ? 'active' : ''}">
+                    <a th:classappend="${page == 'contact' ? 'text-primary' : ''}"
+                       class="nav-link"
+                       href="/contact">Contact<span class="sr-only" th:if="${page == 'contact'}">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logoff</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!--breadcrumb-->
+    <nav aria-label="breadcrumb" th:fragment="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" th:unless="${page == 'home'}"><a th:href="@{/}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:if="${page == 'home'}">Home</li>
+            <li class="breadcrumb-item active" aria-current="page" th:if="${page == 'profile'}">Profile</li>
+            <li class="breadcrumb-item active" aria-current="page" th:if="${page == 'contact'}">Contact</li>
+            <li class="breadcrumb-item active" aria-current="page" th:if="${page == 'transfer'}">Transfer</li>
+            <li class="breadcrumb-item" th:if="${page== 'pay' || page == 'add-connection'}"><a th:href="@{/transfer}">Transfer</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:if="${page == 'add-connection'}">Add connection</li>
+            <li class="breadcrumb-item active" aria-current="page" th:if="${page == 'pay'}">Pay</li>
+            <li class="breadcrumb-item" th:if="${page == 'update-balance'}"><a th:href="@{/profile}">Profile</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:if="${page == 'update-balance'}">Update balance</li>
+        </ol>
+    </nav>
+</header>
+</body>
+</html>
