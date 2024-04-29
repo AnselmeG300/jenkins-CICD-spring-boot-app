@@ -1,1 +1,1 @@
-# jenkins-deploy-spring-boot-app
+# jenkins-CICD-spring-boot-app
