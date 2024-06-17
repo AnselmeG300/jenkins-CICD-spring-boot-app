@@ -9,8 +9,8 @@ pipeline {
     environment {
         DOCKERHUB_AUTH = credentials('DockerHubCredentials')
         MYSQL_AUTH= credentials('MYSQL_AUTH')
-        HOSTNAME_DEPLOY_STAGING = "40.74.220.182"
-        HOSTNAME_DEPLOY_PROD = "40.124.138.239"
+        HOSTNAME_DEPLOY_STAGING = "40.124.133.139"
+        HOSTNAME_DEPLOY_PROD = "40.124.133.154"
         IMAGE_NAME= 'paymybuddy'
         IMAGE_TAG= 'latest'
 
@@ -30,7 +30,7 @@ pipeline {
             }
         }
 
-        stage('SonarQube analysis') {
+        stage('SonarCloud analysis') {
             steps {
                 withSonarQubeEnv('SonarCloudServer') {
                     sh 'mvn sonar:sonar -s .m2/settings.xml'
