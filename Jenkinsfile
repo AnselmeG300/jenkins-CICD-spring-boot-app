@@ -13,7 +13,6 @@ pipeline {
         HOSTNAME_DEPLOY_PROD = "35.174.12.51"
         IMAGE_NAME= 'paymybuddy'
         IMAGE_TAG= 'latest'
-
     }
 
     stages {

@@ -6,10 +6,11 @@ WORKDIR /app
 
 COPY ${JAR_FILE} paymybuddy.jar
 
-ENV SPRING_DATASOURCE_USERNAME=root
+ENV SPRING_DATASOURCE_USERNAME=user_bd
 
-ENV SPRING_DATASOURCE_PASSWORD=password
+ENV SPRING_DATASOURCE_PASSWORD=password_bd
 
-ENV SPRING_DATASOURCE_URL=jdbc:mysql://172.17.0.1:3306/db_paymybuddy
+# SPRING_DATASOURCE_URL=jdbc:mysql://<ip_docker0>:3306/db_paymybuddy
+ENV SPRING_DATASOURCE_URL=url_bd 
 
 CMD ["java", "-jar" , "paymybuddy.jar"]
