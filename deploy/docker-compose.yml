@@ -33,6 +33,7 @@ services:
       - db_user
       - db_password
 
+
 secrets:
   db_user:
     file: secrets/db_user.txt
