@@ -9,8 +9,8 @@ pipeline {
     environment {
         DOCKERHUB_AUTH = credentials('DockerHubCredentials')
         MYSQL_AUTH= credentials('MYSQL_AUTH')
-        HOSTNAME_DEPLOY_PROD = "20.115.44.142"
-        HOSTNAME_DEPLOY_STAGING = "20.115.42.32"
+        HOSTNAME_DEPLOY_PROD = "34.197.213.138"
+        HOSTNAME_DEPLOY_STAGING = "34.233.177.253"
         IMAGE_NAME= 'paymybuddy'
         IMAGE_TAG= 'latest'
     }
@@ -60,10 +60,33 @@ pipeline {
                 """
             }
         }
+        stage ('IAC Staging  on aws') { 
+          when {
+            expression { GIT_BRANCH == 'origin/iac' }
+           }
+          agent { 
+                    docker { 
+                            image 'jenkins/jnlp-agent-terraform' 
+                    } 
+                }     
+            steps {
+              withCredentials([aws(credentialsId: 'AwsCredentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                dir('iac/staging') {
+                sh '''
+                    terraform init
+                    terraform plan
+                    terraform apply -auto-approve
+                    sleep 60
+                '''
+                }
+              }
+            }
+        }
+
 
         stage ('Deploy in staging') {
             when {
-                expression { GIT_BRANCH == 'origin/main' }
+                expression { GIT_BRANCH == 'origin/iac' }
             }
             steps {
                 sshagent(credentials: ['SSH_AUTH_SERVER']) { 
@@ -91,7 +114,7 @@ pipeline {
 
         stage('Test Staging') {
             when {
-                expression { GIT_BRANCH == 'origin/main' }
+                expression { GIT_BRANCH == 'origin/iac' }
             }
             steps {
                 sh '''
@@ -102,9 +125,57 @@ pipeline {
             }
         }
 
+        stage('Destroy staging') {  
+          when {
+            expression { GIT_BRANCH == 'origin/iac' }
+           }        
+           agent { 
+                    docker { 
+                            image 'jenkins/jnlp-agent-terraform'  
+                    } 
+                }
+            steps {
+              timeout(time: 10, unit: "MINUTES") {
+                        input message: "Confirmer vous la suppression de l'environnement staging dans AWS ?", ok: 'Yes'
+                    } 
+              withCredentials([aws(credentialsId: 'AwsCredentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                dir('iac/staging') {
+                sh '''
+                    terraform destroy -auto-approve  
+                '''
+                }
+              }
+            }
+        }
+
+        stage ('IAC Prod on AWS'){
+            when {
+            expression { GIT_BRANCH == 'origin/iac' }
+           }
+             
+            agent { 
+                    docker { 
+                            image 'jenkins/jnlp-agent-terraform' 
+                    } 
+                }
+             steps {
+              withCredentials([aws(credentialsId: 'AwsCredentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                dir ('iac/prod') {
+                sh '''
+                    terraform init
+                    terraform plan
+                    terraform apply -auto-approve 
+                    sleep 60
+                '''
+                }
+              }
+        
+            }
+        } 
+
         stage ('Deploy in prod') {
             when {
-                expression { GIT_BRANCH == 'origin/main' }
+                expression { GIT_BRANCH == 'origin/iac' }
             }
             steps {
                 sshagent(credentials: ['SSH_AUTH_SERVER']) { 
@@ -132,7 +203,7 @@ pipeline {
 
         stage('Test Prod') {
             when {
-                expression { GIT_BRANCH == 'origin/main' }
+                expression { GIT_BRANCH == 'origin/iac' }
             }
             steps {
                 sh '''
@@ -140,6 +211,29 @@ pipeline {
                     apk add --no-cache curl
                     curl ${HOSTNAME_DEPLOY_PROD}:8080
                 '''
+            }
+        }
+
+        stage('Destroy prod') {  
+          when {
+            expression { GIT_BRANCH == 'origin/iac' }
+           }        
+           agent { 
+                    docker { 
+                            image 'jenkins/jnlp-agent-terraform'  
+                    } 
+                }
+            steps {
+              timeout(time: 10, unit: "MINUTES") {
+                        input message: "Confirmer vous la suppression de l'environnement staging dans AWS ?", ok: 'Yes'
+                    } 
+              withCredentials([aws(credentialsId: 'AwsCredentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                dir('iac/prod') {
+                sh '''
+                    terraform destroy -auto-approve  
+                '''
+                }
+              }
             }
         }
     }
