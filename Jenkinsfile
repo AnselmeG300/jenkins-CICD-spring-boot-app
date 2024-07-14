@@ -128,8 +128,8 @@ pipeline {
                 } 
             }
             steps {
-                timeout(time: 5, unit: "MINUTES") {
-                    input message: "Confirmer vous la suppression de l'environnement staging dans AWS ?", ok: 'Yes'
+                timeout(time: 3, unit: "MINUTES") {
+                    // input message: "Confirmer vous la suppression de l'environnement staging dans AWS ?", ok: 'Yes'
                 } 
                 withCredentials([aws(credentialsId: 'AwsCredentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     dir('terraform/staging') {
@@ -210,8 +210,8 @@ pipeline {
                 } 
             }
             steps {
-                timeout(time: 5, unit: "MINUTES") {
-                    input message: "Confirmer vous la suppression de l'environnement staging dans AWS ?", ok: 'Yes'
+                timeout(time: 3, unit: "MINUTES") {
+                    // input message: "Confirmer vous la suppression de l'environnement staging dans AWS ?", ok: 'Yes'
                 } 
                 withCredentials([aws(credentialsId: 'AwsCredentials', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     dir('terraform/prod') {
