@@ -1,0 +1,49 @@
+version: '3.1'
+services:
+  paymybuddy:
+    image: {{ docker_image_name }}:{{ docker_image_tag }}
+    container_name: paymybuddy
+    restart: always
+    env_file:
+      - env/paymybuddy.env
+    depends_on:
+      - paymybuddydb
+    ports:
+      - "8080:8080"
+    networks:
+      - paymybuddynetwork
+    secrets:
+      - db_user
+      - db_password
+
+  paymybuddydb:
+    image: mysql:latest
+    container_name: paymybuddydb
+    restart: always
+    env_file:
+      - env/mysql.env
+    volumes:
+      - db_paymybuddy:/var/lib/mysql 
+      - ./initdb:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    networks:
+      - paymybuddynetwork
+    secrets:
+      - db_user
+      - db_password
+
+
+secrets:
+  db_user:
+    file: secrets/db_user.txt
+  db_password:
+    file: secrets/db_password.txt
+
+volumes:
+  db_paymybuddy:
+
+networks:
+  paymybuddynetwork:
+    driver: bridge
+

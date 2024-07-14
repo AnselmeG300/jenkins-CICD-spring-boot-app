@@ -1,0 +1,11 @@
+FROM python:2.7-slim
+
+RUN apt-get update && apt-get install -y \
+    ansible \
+    python-pip \
+    git \
+    openssh-client \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir \
+    ansible-lint

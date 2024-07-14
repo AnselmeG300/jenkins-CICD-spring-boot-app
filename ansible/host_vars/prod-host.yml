@@ -1,0 +1,2 @@
+---
+ansible_host: "{{ lookup('env', 'HOSTNAME_DEPLOY_PROD') }}"
