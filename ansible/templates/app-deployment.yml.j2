@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paymybuddy
+  labels:
+    app: paymybuddy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: paymybuddy
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: paymybuddy
+        tier: frontend
+    spec:
+      containers:
+      - image: {{ docker_image_name }}:{{ docker_image_tag }}
+        name: paymybuddy
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:mysql://paymybuddy-mysql/db_paymybuddy
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: app-paymybuddy-pass
+              key: mysql_user
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-paymybuddy-pass
+              key: mysql_password
+        ports:
+        - containerPort: 8080
+          name: paymybuddy

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: paymybuddy
+  labels:
+    app: paymybuddy
+spec:
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+    nodePort: 30008
+  selector:
+    app: paymybuddy
+    tier: frontend
+  type: NodePort

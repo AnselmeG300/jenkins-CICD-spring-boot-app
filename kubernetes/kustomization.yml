@@ -1,0 +1,10 @@
+resources:
+  - app-app-secret.yml
+  - service-cluster-ip-mysql.yml
+  - mysql-pv.yml 
+  - mysq-pvc.yml 
+  - mysql-deployment.yml
+  - service-node-port-app.yml
+  - app-pv.yml
+  - app-pvc.yml
+  - app-deployment.yml
