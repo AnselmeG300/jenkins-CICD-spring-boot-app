@@ -13,6 +13,11 @@ resource "aws_instance" "myec2" {
   key_name      = "devops-cicd-jenkins"
   tags = var.aws_common_tag
   security_groups = [aws_security_group.allow_http_https.name]
+  root_block_device {
+    delete_on_termination = true
+    volume_size           = 100
+    encrypted             = true
+  }
 }
 
 resource "aws_eip_association" "eip_assoc" {
